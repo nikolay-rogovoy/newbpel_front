@@ -1,0 +1,118 @@
+name: dev-build-deploy
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches-ignore:
+      - "stable/**"
+      - "release/**"
+
+jobs:
+  build_image:
+    name: build_image
+    runs-on: ubuntu-20.04
+    outputs:
+      image_tag: ${{ steps.git_image_tag.outputs.tag }}
+      image_digest: ${{ steps.docker_build.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Build Docker Image Names
+      - name: Docker meta
+        id: image_meta
+        uses: crazy-max/ghaction-docker-meta@v2
+        # uses: crazy-max/ghaction-docker-meta@ac90ddf06eee55fbe48897eeec38bba2f7948e7e
+        with:
+          # list of Docker images to use as base name for tags
+          # ToDo: Replace with a new repo.
+          images: |
+            demonihin/test
+          # Force latest tag.
+          flavor: |
+            latest=true
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+      # Start build
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker images
+        # You may pin to the exact commit or the version.
+        # uses: docker/build-push-action@9379083e426e2e84abb80c8c091f5cdeb7d3fd7a
+        uses: docker/build-push-action@v2.3.0
+        id: docker_build
+        with:
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.image_meta.outputs.tags }}
+          labels: ${{ steps.image_meta.outputs.labels }}
+      # Acquire Image Tag (as sha-[git short commit id])
+      - name: Filter and return Image Build Tag
+        id: git_image_tag
+        shell: bash
+        run: |
+          GIT_COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+          SHA_SHORT_TAG="sha-${GIT_COMMIT_ID}"
+          echo "Image tag is ${SHA_SHORT_TAG}"
+          echo "::set-output name=tag::${SHA_SHORT_TAG}"
+
+  deploy_helm:
+    name: deploy_helm
+    runs-on: ubuntu-20.04
+    needs:
+      - build_image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        # Save current branch name to BRANCH_NAME env var.
+      - uses: nelonoel/branch-name@v1.0.1
+      - name: Set Git branch name output
+        id: git_branch_name
+        shell: bash
+        run: |
+          echo "::set-output name=name::${BRANCH_NAME}"
+
+      - name: Deploy
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          #exec: helm upgrade APP_NAME ./.helm/app/ --install --wait --atomic --namespace=APP_NAMESPACE --set=app.name=APP_NAME --values=./.helm/app/values.yaml
+          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+          exec: |
+            set -x
+            # Prepare values.
+            cat <<END>values.yaml
+            image:
+              repository: demonihin/test
+              tag: ${{ needs.build_image.outputs.image_tag }}
+
+            ingress:
+              annotations:
+                kubernetes.io/tls-acme: "true"
+                cert-manager.io/cluster-issuer: letsencrypt
+              host: dev-1.hmproms.com
+              tls:
+              # The same secret for front and back
+              # Only front has annotation to request certificate.
+               - secretName: dev-1-ingress-tls
+                 hosts:
+                   - dev-1.hmproms.com
+
+            END
+
+            # Install Chart
+            helm upgrade -i front-${{ steps.git_branch_name.outputs.name }} ./helm/ \
+              --wait --atomic --timeout=180s \
+              --namespace=hmproms-develop --values=values.yaml

@@ -1,0 +1,29 @@
+name: dev-delete-release
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    types: [closed]
+  delete: {}
+
+jobs:
+  release-uninstallation:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: nelonoel/branch-name@v1.0.1
+      - name: Set Git branch name output
+        id: git_branch_name
+        shell: bash
+        run: |
+          echo "::set-output name=name::${BRANCH_NAME}"
+
+      - name: Remove
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          #exec: helm upgrade APP_NAME ./.helm/app/ --install --wait --atomic --namespace=APP_NAMESPACE --set=app.name=APP_NAME --values=./.helm/app/values.yaml
+          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+          exec: |
+            set -x
+
+            # Install Chart
+            helm uninstall --namespace=frontend-dev front-${{ steps.git_branch_name.outputs.name }}

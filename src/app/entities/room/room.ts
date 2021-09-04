@@ -1,0 +1,33 @@
+export interface Room {
+  idroom: number;
+  idorg: number;
+  name: string;
+  comment: string;
+  dtcre: Date;
+  active: boolean;
+  idroomtype: number;
+  roomtype_name: string;
+  idbed: number;
+  bed_name: string;
+  idextrabed: number;
+  extrabed_name: string;
+  idfridge: number;
+  fridge_name: string;
+  idkitchen: number;
+  kitchen_name: string;
+  idsafe: number;
+  safe_name: string;
+  idtv: number;
+  tv_name: string;
+  idiron: number;
+  iron_name: string;
+  idhygienekit: number;
+  hygienekit_name: string;
+  idinternet: number;
+  internet_name: string;
+  idtempcontrol: number;
+  tempcontrol_name: string;
+  square: number;
+  dishes: boolean;
+  hairdryer: boolean;
+}
