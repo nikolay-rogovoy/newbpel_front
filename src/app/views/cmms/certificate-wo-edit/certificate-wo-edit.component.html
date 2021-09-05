@@ -1,0 +1,28 @@
+<div class="animated fadeIn">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-edit"></i> {{getChanged() ? '*' : ''}} {{formGroup.controls['work_order_no'].value}}
+          </div>
+          <div class="col-sm-6 d-flex flex-row-reverse">
+            <button type="submit" class="btn btn-sm btn-primary" style="margin-left: 5px;"
+              [disabled]="!formGroup.valid || !getChanged()"><i class="fa fa-dot-circle-o"></i> Submit</button>
+            <button type="button" class="btn btn-sm btn-warning" style="margin-left: 50px;" (click)="cancel()"><i
+                class="fa fa-ban"></i>
+              Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="form-group col-sm-12">
+            <label for="attribute4">Complited by superwiser</label>
+            <input type="date" class="form-control" id="attribute4" placeholder="Creation date" formControlName="attribute4">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

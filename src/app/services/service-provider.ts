@@ -111,7 +111,7 @@ export class ServiceProvider {
       const entityUrl = ServiceProvider.getApiAddr(this.appConfig.config.host) + entityName + '/delete';
       // Массив ключей для удаления
       let entityMetadata = getEntitiesMetadata().find(x => x.name === entityName);
-      if(entityMetadata == null) {
+      if (entityMetadata == null) {
         throw new Error(`Not found metadata for ${entityName}`);
       }
       const deleteData = {
@@ -312,7 +312,12 @@ export class ServiceProvider {
 
   /**Получить список*/
   public getEntityList<T extends IEntity>(entityName: EntityName): Observable<T[]> {
-    return this.getEntityListUrl<T>(entityName);
+    return this.getEntityListUrl<T>(entityName)
+      .pipe(
+        map((entities: T[]) => {
+          return entities.map(x => this.loadRawData(x, entityName));;
+        })
+      );
   }
 
   /**Получить список для URL*/
@@ -351,7 +356,7 @@ export class ServiceProvider {
     return +localStorage.getItem('iddep');
   }
 
-  private loadRawData(raw, entityName: EntityName) {
+  loadRawData(raw, entityName: EntityName) {
     let entityMetadata = getEntitiesMetadata().find(x => x.name === entityName);
     if (entityMetadata) {
       for (let dateColumn of entityMetadata.columns.filter(x => x.type === ColumnTypeMetadata.date)) {

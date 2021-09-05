@@ -3,26 +3,24 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AtGridModule } from '../../components/at-grid/at-grid-module';
 import { TemplateProviderModule } from '../../lib/template-provider-component/template-provider-module';
-import { DepEditComponent } from './dep-edit/dep-edit.component';
-import { DepsSelectComponent } from './deps-select/deps-select.component';
-import { DepsComponent } from './deps/deps.component';
-import { UsersRoutingModule } from './users-routing.module';
+import { CertificateWoEditComponent } from './certificate-wo-edit/certificate-wo-edit.component';
+import { CertificateComponent } from './certificate/certificate.component';
+import { CmmsRoutingModule } from './cmms-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    UsersRoutingModule,
+    CmmsRoutingModule,
     AtGridModule,
     ReactiveFormsModule,
     TemplateProviderModule,
   ],
   declarations: [
-    DepsComponent,
-    DepEditComponent,
-    DepsSelectComponent,
+    CertificateComponent,
+    CertificateWoEditComponent,
   ],
   entryComponents: [
-    DepsSelectComponent,
+    CertificateWoEditComponent
   ]
 })
-export class UsersModule { }
+export class CmmsModule { }

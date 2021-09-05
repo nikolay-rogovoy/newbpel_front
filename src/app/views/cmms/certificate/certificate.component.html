@@ -1,0 +1,49 @@
+<div class="animated fadeIn">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-edit"></i> {{getChanged() ? '*' : ''}}
+          </div>
+          <div class="col-sm-6 d-flex flex-row-reverse">
+            <button type="submit" class="btn btn-sm btn-primary" style="margin-left: 5px;"
+              [disabled]="!formGroup.valid || !getChanged()"><i class="fa fa-dot-circle-o"></i> Submit</button>
+            <button type="button" class="btn btn-sm btn-warning" style="margin-left: 50px;" (click)="cancel()"><i
+                class="fa fa-ban"></i>
+              Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="form-group col-sm-6">
+            <label for="dt_start">Date start</label>
+            <input type="date" class="form-control" id="dt_start" placeholder="Date start" formControlName="dt_start">
+          </div>
+          <div class="form-group col-sm-6">
+            <label for="dt_end">Date end</label>
+            <input type="date" class="form-control" id="dt_end" placeholder="Date end" formControlName="dt_end">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-sm-6">
+          <i class="fa fa-list"></i> Certificate WO list
+        </div>
+        <div class="col-sm-6 d-flex flex-row-reverse">
+          <button type="button" class="btn btn-sm btn-primary" (click)="newItem()"><i class="fa fa-plus-circle"></i>
+            Create certificate</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <app-at-grid [data]="positions" [metaData]="gridMetaData" [staticMode]="true" [currentPage]="0" [imageSize]="100"
+        (onSelect)="selectRow($event)"></app-at-grid>
+    </div>
+  </div>
+</div>

@@ -27,7 +27,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', loadChildren: () => import('./views/dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'admin', loadChildren: () => import('./views/users/users.module').then(m => m.UsersModule) },
-      { path: 'room', loadChildren: () => import('./views/rooms/rooms.module').then(m => m.RoomsModule) }
+      { path: 'cmms', loadChildren: () => import('./views/cmms/cmms.module').then(m => m.CmmsModule) },
     ],
     canActivate: [AuthGuard]
   },
