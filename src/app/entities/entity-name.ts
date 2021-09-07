@@ -10,4 +10,5 @@ export enum EntityName {
   rroperation = 'rroperation',
   roleresource = 'roleresource',
   cmms_wo = 'cmms_wo',
+  cmms_wo_sum = 'cmms_wo_sum',
 }

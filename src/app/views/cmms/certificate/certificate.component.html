@@ -36,7 +36,7 @@
           <i class="fa fa-list"></i> Certificate WO list
         </div>
         <div class="col-sm-6 d-flex flex-row-reverse">
-          <button type="button" class="btn btn-sm btn-primary" (click)="newItem()"><i class="fa fa-plus-circle"></i>
+          <button type="button" class="btn btn-sm btn-primary" (click)="createCertificate()"><i class="fa fa-plus-circle"></i>
             Create certificate</button>
         </div>
       </div>
@@ -44,6 +44,22 @@
     <div class="card-body">
       <app-at-grid [data]="positions" [metaData]="gridMetaData" [staticMode]="true" [currentPage]="0" [imageSize]="100"
         (onSelect)="selectRow($event)"></app-at-grid>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-sm-6">
+          <i class="fa fa-list"></i> Certificate
+        </div>
+        <div class="col-sm-6 d-flex flex-row-reverse">
+          <button type="button" class="btn btn-sm btn-primary" (click)="newItem()"><i class="fa fa-plus-circle"></i>
+            Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <app-at-grid [data]="positions2" [metaData]="gridMetaDataCert" [staticMode]="true" [currentPage]="0" [imageSize]="100"></app-at-grid>
     </div>
   </div>
 </div>

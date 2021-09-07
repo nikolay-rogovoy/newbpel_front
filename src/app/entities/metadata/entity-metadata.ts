@@ -101,6 +101,12 @@ export function getEntitiesMetadata(): EntityMetadata[] {
         }
       ],
     },
+    {
+      name: 'cmms_wo_sum',
+      pkName: '',
+      columns: [
+      ],
+    },
   ];
 }
 
